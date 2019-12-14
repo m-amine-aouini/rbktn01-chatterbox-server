@@ -102,5 +102,4 @@ describe('Node Server Request Listener Function', function() {
     expect(res._responseCode).to.equal(404);
     expect(res._ended).to.equal(true);
   });
-
 });
