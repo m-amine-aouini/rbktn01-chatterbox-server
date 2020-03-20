@@ -11,18 +11,20 @@ let requests = {
     res.writeHead(status, headers);
     res.end(JSON.stringify(data));
   },
-  postReq: function (req, res, status, headers) {
+  makeAction: function (req, res, status, headers) {
     let getData = '';
-    req.on('data', function (data) {
-      getData += data;
+    let length = messages.length + 1;
 
-      messages.push(JSON.parse(getData));
+    req.on('data', function (data) {
+      getData = JSON.stringify(data + '');
+
+      messages.unshift(JSON.parse(getData));
 
     });
     req.on('end', function (data) {
-      res.writeHead(status || 201, headers);
 
-      res.end('done');
+      requests.responseData(res, status, headers, { result: length });
+
     });
   }
 };

@@ -1,7 +1,8 @@
 
 //*Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
-var { responseData, messages, postReq } = require('./requestsHandlers');
+var { responseData, messages, makeAction } = require('./requestsHandlers');
+
 
 var headers = {
   'access-control-allow-origin': '*',
@@ -13,8 +14,8 @@ var headers = {
 
 var paths = {
   '/classes/messages': {
-    'GET': responseData,
-    'POST': postReq
+    'POST': makeAction,
+    'GET': responseData
   }
 };
 
@@ -26,10 +27,10 @@ exports.requestHandler = function (request, response) {
   // The outgoing status.
   var statusCode = 200;
 
-  var path = paths[request.url];
-  var router = path[request.method];
+  var router = paths[request.url][request.method];
 
-  if (router) {
+
+  if (!!router) {
     if (request.method === 'GET') {
 
       router(response, statusCode, headers, { results: messages });
@@ -37,9 +38,11 @@ exports.requestHandler = function (request, response) {
     } else if (request.method === 'POST') {
       router(request, response, 201, headers);
     }
+
   } else {
-    responseData(response, 404, headers, '');
+    responseData(response, 404, headers, 'router in not defined');
   }
+
 
 };
 
